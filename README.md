@@ -1,3 +1,4 @@
 # www.quiz.com
 There can be played quizzes or you can make quizzes. There are already quizzes online (build by owner) most are from pokemon...
 can ther not stand ai generated  only pokemon or charachter (games) quizzes nothing als
+nothing eles as pokemon or game chrachters and there is still ai genereted

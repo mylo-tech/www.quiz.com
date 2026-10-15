@@ -1,123 +1,137 @@
-# www.quiz.com
-<!DOCTYPE html>
+# www.quiz.com<!DOCTYPE html>
 <html lang="nl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pokémon Quiz Mania</title>
+    <title>Pokémon Master Quiz</title>
     <style>
-        /* Pokémon Thema Styling */
+        /* Professionele Quiz Interface */
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #1c1c1f; color: #ffffff; line-height: 1.6; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #0f172a; color: #f8fafc; display: flex; flex-direction: column; min-height: 100vh; }
         
-        /* Navigatiebalk */
-        header { background-color: #111; padding: 20px; border-bottom: 4px solid #ffcb05; }
-        nav { display: flex; justify-content: space-between; align-items: center; max-width: 1000px; margin: 0 auto; }
-        .logo { font-size: 26px; font-weight: bold; color: #ffcb05; text-decoration: none; text-shadow: 2px 2px #3b4cca; }
-        .logo span { color: #ff1f1f; }
-        .nav-links a { color: #fff; text-decoration: none; margin-left: 20px; font-weight: bold; transition: color 0.3s; }
-        .nav-links a:hover { color: #ffcb05; }
+        header { background-color: #1e293b; padding: 15px; text-align: center; border-bottom: 4px solid #e2ea07; }
+        header h1 { color: #e2ea07; font-size: 28px; text-shadow: 2px 2px #3b4cca; }
 
-        /* Welkomstsectie */
-        .hero { max-width: 800px; margin: 50px auto; padding: 20px; text-align: center; }
-        .hero h1 { font-size: 42px; margin-bottom: 15px; color: #fff; text-shadow: 2px 2px #111; }
-        .hero h1 span { color: #ffcb05; }
-        .hero p { font-size: 18px; color: #ccc; margin-bottom: 30px; }
-
-        /* Quiz Hub Layout */
-        .quiz-container { max-width: 1000px; margin: 0 auto; padding: 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; }
-        .quiz-card { background-color: #2a2a2e; padding: 25px; border-radius: 12px; border: 2px solid #3b4cca; text-align: center; transition: transform 0.3s; }
-        .quiz-card:hover { transform: translateY(-5px); border-color: #ffcb05; }
-        .quiz-card h2 { color: #ffcb05; margin-bottom: 12px; font-size: 22px; }
-        .quiz-card p { color: #ddd; margin-bottom: 20px; font-size: 15px; }
+        .quiz-wrapper { flex: 1; display: flex; justify-content: center; align-items: center; padding: 20px; }
+        .quiz-box { background-color: #1e293b; width: 100%; max-width: 600px; padding: 30px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); border: 1px solid #334155; }
         
-        /* Knoppen */
-        .play-btn { background-color: #ff1f1f; color: white; border: none; padding: 10px 25px; font-size: 16px; font-weight: bold; border-radius: 25px; cursor: pointer; transition: background 0.2s; width: 100%; }
-        .play-btn:hover { background-color: #cc1818; }
+        .progress-bar { background-color: #334155; height: 8px; border-radius: 4px; margin-bottom: 20px; overflow: hidden; }
+        .progress-fill { background-color: #3b4cca; height: 100%; width: 0%; transition: width 0.3s; }
 
-        /* Interactieve Mini-Quiz Box */
-        .interactive-box { max-width: 600px; margin: 40px auto; background-color: #222; border: 3px dashed #ffcb05; padding: 30px; border-radius: 15px; text-align: center; }
-        .interactive-box h3 { color: #ffcb05; margin-bottom: 15px; }
-        .options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
-        .option-btn { background-color: #333; color: white; border: 2px solid #555; padding: 12px; border-radius: 8px; cursor: pointer; font-weight: bold; }
-        .option-btn:hover { background-color: #3b4cca; border-color: #ffcb05; }
-        #feedback { margin-top: 15px; font-weight: bold; font-size: 18px; }
-
-        footer { text-align: center; padding: 30px; color: #777; font-size: 14px; margin-top: 60px; background-color: #111; border-top: 2px solid #222; }
+        .question-text { font-size: 22px; font-weight: 600; margin-bottom: 25px; color: #ffffff; }
+        
+        .options-list { display: flex; flex-direction: column; gap: 12px; }
+        .option-button { background-color: #334155; color: #f8fafc; border: 2px solid #475569; padding: 15px; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; text-align: left; transition: all 0.2s; }
+        .option-button:hover { background-color: #475569; border-color: #e2ea07; transform: translateX(5px); }
+        
+        .score-screen { text-align: center; display: none; }
+        .score-screen h2 { color: #e2ea07; font-size: 32px; margin-bottom: 15px; }
+        .score-text { font-size: 20px; margin-bottom: 25px; }
+        .restart-btn { background-color: #ef4444; color: white; border: none; padding: 12px 30px; font-size: 18px; font-weight: bold; border-radius: 30px; cursor: pointer; transition: background 0.2s; }
+        .restart-btn:hover { background-color: #dc2626; }
     </style>
 </head>
 <body>
 
     <header>
-        <nav>
-            <a href="#" class="logo">Poke<span>Quiz</span></a>
-            <div class="nav-links">
-                <a href="#">Home</a>
-                <a href="#">Alle Quizzen</a>
-                <a href="#">Topscores</a>
-            </div>
-        </nav>
+        <h1>PokeQuiz Arena</h1>
     </header>
 
-    <section class="hero">
-        <h1>Welkom bij <span>Pokémon Quiz Mania</span>!</h1>
-        <p>Ben jij een échte Pokémon Meester? Test je legendarische kennis met onze wekelijkse nieuwe Pokémon-quizzen. Geen gedoe, puur Pokémon!</p>
-    </section>
-
-    <!-- Interactieve Demo Quiz -->
-    <div class="interactive-box">
-        <h3>Dagelijkse Snel-Quiz: Wie is deze Pokémon?</h3>
-        <p><em>"Het heeft een bliksemflits-vormige staart en laadt elektriciteit op in zijn rode wangen."</em></p>
-        <div class="options">
-            <button class="option-btn" onclick="checkAntwoord(false)">Charmander</button>
-            <button class="option-btn" onclick="checkAntwoord(true)">Pikachu</button>
-            <button class="option-btn" onclick="checkAntwoord(false)">Eevee</button>
-            <button class="option-btn" onclick="checkAntwoord(false)">Squirtle</button>
+    <div class="quiz-wrapper">
+        <!-- Het Quiz Scherm -->
+        <div class="quiz-box" id="quiz-block">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress"></div>
+            </div>
+            <div class="question-text" id="question">Vraag laden...</div>
+            <div class="options-list" id="options">
+                <!-- Knoppen worden hier geladen door JavaScript -->
+            </div>
         </div>
-        <div id="feedback"></div>
+
+        <!-- Het Score Scherm -->
+        <div class="quiz-box score-screen" id="score-block">
+            <h2>Quiz Voltooid!</h2>
+            <p class="score-text" id="score-report"></p>
+            <button class="restart-btn" onclick="HerstartQuiz()">Speel Opnieuw</button>
+        </div>
     </div>
 
-    <!-- Lijst met andere Pokémon Quizzen -->
-    <h2 style="text-align: center; margin-top: 40px; color: #fff;">Kies een Categorie</h2>
-    <main class="quiz-container">
-        <div class="quiz-card">
-            <h2>Gen 1 Kennis</h2>
-            <p>Weet jij alles over de allereerste 151 Pokémon uit Kanto? Test het nu!</p>
-            <button class="play-btn" onclick="startQuiz('Gen 1')">Start Quiz</button>
-        </div>
-        <div class="quiz-card">
-            <h2>Raad de Evolutie</h2>
-            <p>Welke steen heeft Eevee nodig? Welk level evolueert deze Pokémon? Pittige vragen!</p>
-            <button class="play-btn" onclick="startQuiz('Evolutie')">Start Quiz</button>
-        </div>
-        <div class="quiz-card">
-            <h2>Legendary & Mythical</h2>
-            <p>Hoe goed ken jij Mewtwo, Arceus en de andere zeldzame legenden?</p>
-            <button class="play-btn" onclick="startQuiz('Legendary')">Start Quiz</button>
-        </div>
-    </main>
-
-    <footer>
-        <p>&copy; 2026 Pokémon Quiz Mania - Gemaakt voor échte fans.</p>
-    </footer>
-
     <script>
-        // Logica voor de dagelijkse mini-quiz
-        function checkAntwoord(isCorrect) {
-            const feedbackDiv = document.getElementById('feedback');
-            if (isCorrect) {
-                feedbackDiv.innerHTML = "🎉 Correct! Het is Pikachu!";
-                feedbackDiv.style.color = "#00ff88";
-            } else {
-                feedbackDiv.innerHTML = "❌ Helaas, probeer het nog eens!";
-                feedbackDiv.style.color = "#ff1f1f";
+        // De vragenlijst (Puur Pokémon)
+        const quizVragen = [
+            {
+                vraag: "Welke Pokémon kies je NIET als starter in de Kanto regio?",
+                opties: ["Bulbasaur", "Charmander", "Pikachu", "Squirtle"],
+                antwoord: "Pikachu"
+            },
+            {
+                vraag: "Welk type aanval is super-effectief tegen een Water-type Pokémon?",
+                opties: ["Vuur", "Gras", "Steen", "Vlieg"],
+                antwoord: "Gras"
+            },
+            {
+                vraag: "Welke steen heb je nodig om Eevee in een Flareon te veranderen?",
+                opties: ["Water Stone", "Thunder Stone", "Moon Stone", "Fire Stone"],
+                antwoord: "Fire Stone"
             }
+        ];
+
+        let huidigeVraagIndex = 0;
+        let score = 0;
+
+        function LaadVraag() {
+            if (huidigeVraagIndex >= quizVragen.length) {
+                ToonEindscherm();
+                return;
+            }
+
+            // Update voortgangsbalk
+            const procent = (huidigeVraagIndex / quizVragen.length) * 100;
+            document.getElementById('progress').style.width = procent + '%';
+
+            // Zet de vraag neer
+            const huidigeVraag = quizVragen[huidigeVraagIndex];
+            document.getElementById('question').innerText = huidigeVraag.vraag;
+
+            // Maak de antwoordknoppen leeg en vul ze opnieuw
+            const optiesContainer = document.getElementById('options');
+            optiesContainer.innerHTML = '';
+
+            huidigeVraag.opties.forEach(optie => {
+                const knop = document.createElement('button');
+                knop.classList.add('option-button');
+                knop.innerText = optie;
+                knop.onclick = () => ControleerAntwoord(optie);
+                optiesContainer.appendChild(knop);
+            });
         }
 
-        // Logica voor de grote quizzen (placeholder)
-        function startQuiz(naam) {
-            alert("De " + naam + " Quiz wordt geladen... Maak je klaar!");
+        function ControleerAntwoord(gekozenOptie) {
+            const juisteAntwoord = quizVragen[huidigeVraagIndex].antwoord;
+            if (gekozenOptie === juisteAntwoord) {
+                score++;
+            }
+            huidigeVraagIndex++;
+            LaadVraag();
         }
+
+        function ToonEindscherm() {
+            document.getElementById('quiz-block').style.display = 'none';
+            document.getElementById('score-block').style.display = 'block';
+            document.getElementById('score-report').innerText = "Je hebt " + score + " van de " + quizVragen.length + " vragen goed beantwoord!";
+        }
+
+        function HerstartQuiz() {
+            huidigeVraagIndex = 0;
+            score = 0;
+            document.getElementById('score-block').style.display = 'none';
+            document.getElementById('quiz-block').style.display = 'block';
+            LaadVraag();
+        }
+
+        // Start de quiz zodra de pagina laadt
+        LaadVraag();
     </script>
 
 </body>

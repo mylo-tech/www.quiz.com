@@ -1,0 +1,139 @@
+www.quiz.com
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokémon Master Quiz</title>
+    <style>
+        /* Professionele Quiz Interface */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #0f172a; color: #f8fafc; display: flex; flex-direction: column; min-height: 100vh; }
+        
+        header { background-color: #1e293b; padding: 15px; text-align: center; border-bottom: 4px solid #e2ea07; }
+        header h1 { color: #e2ea07; font-size: 28px; text-shadow: 2px 2px #3b4cca; }
+
+        .quiz-wrapper { flex: 1; display: flex; justify-content: center; align-items: center; padding: 20px; }
+        .quiz-box { background-color: #1e293b; width: 100%; max-width: 600px; padding: 30px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); border: 1px solid #334155; }
+        
+        .progress-bar { background-color: #334155; height: 8px; border-radius: 4px; margin-bottom: 20px; overflow: hidden; }
+        .progress-fill { background-color: #3b4cca; height: 100%; width: 0%; transition: width 0.3s; }
+
+        .question-text { font-size: 22px; font-weight: 600; margin-bottom: 25px; color: #ffffff; }
+        
+        .options-list { display: flex; flex-direction: column; gap: 12px; }
+        .option-button { background-color: #334155; color: #f8fafc; border: 2px solid #475569; padding: 15px; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; text-align: left; transition: all 0.2s; }
+        .option-button:hover { background-color: #475569; border-color: #e2ea07; transform: translateX(5px); }
+        
+        .score-screen { text-align: center; display: none; }
+        .score-screen h2 { color: #e2ea07; font-size: 32px; margin-bottom: 15px; }
+        .score-text { font-size: 20px; margin-bottom: 25px; }
+        .restart-btn { background-color: #ef4444; color: white; border: none; padding: 12px 30px; font-size: 18px; font-weight: bold; border-radius: 30px; cursor: pointer; transition: background 0.2s; }
+        .restart-btn:hover { background-color: #dc2626; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>PokeQuiz Arena</h1>
+    </header>
+
+    <div class="quiz-wrapper">
+        <!-- Het Quiz Scherm -->
+        <div class="quiz-box" id="quiz-block">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress"></div>
+            </div>
+            <div class="question-text" id="question">Vraag laden...</div>
+            <div class="options-list" id="options">
+                <!-- Knoppen worden hier geladen door JavaScript -->
+            </div>
+        </div>
+
+        <!-- Het Score Scherm -->
+        <div class="quiz-box score-screen" id="score-block">
+            <h2>Quiz Voltooid!</h2>
+            <p class="score-text" id="score-report"></p>
+            <button class="restart-btn" onclick="HerstartQuiz()">Speel Opnieuw</button>
+        </div>
+    </div>
+
+    <script>
+        // De vragenlijst (Puur Pokémon)
+        const quizVragen = [
+            {
+                vraag: "Welke Pokémon kies je NIET als starter in de Kanto regio?",
+                opties: ["Bulbasaur", "Charmander", "Pikachu", "Squirtle"],
+                antwoord: "Pikachu"
+            },
+            {
+                vraag: "Welk type aanval is super-effectief tegen een Water-type Pokémon?",
+                opties: ["Vuur", "Gras", "Steen", "Vlieg"],
+                antwoord: "Gras"
+            },
+            {
+                vraag: "Welke steen heb je nodig om Eevee in een Flareon te veranderen?",
+                opties: ["Water Stone", "Thunder Stone", "Moon Stone", "Fire Stone"],
+                antwoord: "Fire Stone"
+            }
+        ];
+
+        let huidigeVraagIndex = 0;
+        let score = 0;
+
+        function LaadVraag() {
+            if (huidigeVraagIndex >= quizVragen.length) {
+                ToonEindscherm();
+                return;
+            }
+
+            // Update voortgangsbalk
+            const procent = (huidigeVraagIndex / quizVragen.length) * 100;
+            document.getElementById('progress').style.width = procent + '%';
+
+            // Zet de vraag neer
+            const huidigeVraag = quizVragen[huidigeVraagIndex];
+            document.getElementById('question').innerText = huidigeVraag.vraag;
+
+            // Maak de antwoordknoppen leeg en vul ze opnieuw
+            const optiesContainer = document.getElementById('options');
+            optiesContainer.innerHTML = '';
+
+            huidigeVraag.opties.forEach(optie => {
+                const knop = document.createElement('button');
+                knop.classList.add('option-button');
+                knop.innerText = optie;
+                knop.onclick = () => ControleerAntwoord(optie);
+                optiesContainer.appendChild(knop);
+            });
+        }
+
+        function ControleerAntwoord(gekozenOptie) {
+            const juisteAntwoord = quizVragen[huidigeVraagIndex].antwoord;
+            if (gekozenOptie === juisteAntwoord) {
+                score++;
+            }
+            huidigeVraagIndex++;
+            LaadVraag();
+        }
+
+        function ToonEindscherm() {
+            document.getElementById('quiz-block').style.display = 'none';
+            document.getElementById('score-block').style.display = 'block';
+            document.getElementById('score-report').innerText = "Je hebt " + score + " van de " + quizVragen.length + " vragen goed beantwoord!";
+        }
+
+        function HerstartQuiz() {
+            huidigeVraagIndex = 0;
+            score = 0;
+            document.getElementById('score-block').style.display = 'none';
+            document.getElementById('quiz-block').style.display = 'block';
+            LaadVraag();
+        }
+
+        // Start de quiz zodra de pagina laadt
+        LaadVraag();
+    </script>
+
+</body>
+</html>
